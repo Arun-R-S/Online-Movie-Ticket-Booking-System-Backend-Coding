@@ -1,0 +1,9 @@
+﻿html {
+    background: linear-gradient(to right bottom, rgb(77, 84, 209), rgb(165, 28, 123) 50%, rgb(238, 74, 55) 100%);
+    background-repeat: no-repeat;
+    height: 100%;
+}
+body{
+    background-color:transparent;
+    
+}

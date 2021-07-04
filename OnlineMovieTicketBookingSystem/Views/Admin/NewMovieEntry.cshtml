@@ -1,0 +1,290 @@
+﻿@model OnlineMovieTicketBookingSystem.Models.Movies
+
+@{
+    Layout = null;
+}
+@{
+    var cookieValue = Request.Cookies["admin"];
+    if (cookieValue == null)
+    {
+        Response.Redirect("~/admin/login");
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+@Styles.Render("~/Style/adminindex")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script type="module" src=@("https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js")></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel="icon" href="~/images/favicon.png">
+
+<style>
+
+
+    #main {
+        font-family: LCDMono2;
+    }
+
+    .active {
+        background-color: aliceblue;
+        box-shadow: 0px 0px 10px grey;
+    }
+
+    .notification {
+        color: white;
+        text-decoration: none;
+        position: relative;
+        display: inline-block;
+        border-radius: 2px;
+    }
+
+        .notification .badge {
+            position: absolute;
+            right: 6px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+</style>
+<body class="w3-light-grey " id="divEmp">
+
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+        <span class="w3-bar-item w3-right">MoviesYet</span>
+    </div>
+
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse w3-white " style="z-index:3;width:300px;" id="mySidebar">
+        <br>
+        <div class="w3-container w3-row">
+            <div class="w3-col s4">
+                <img src="../images/ceo.jpg" class="w3-circle w3-margin-right" style="width:80px; box-shadow: 0px 0px 5px grey;">
+            </div>
+            <div class="w3-col s8 w3-bar">
+                <span>Welcome, <strong>Admin</strong></span><br>
+                <a href="#" class="w3-bar-item w3-button notification">
+                    <span><img class="width-50" src="../images/svg/icons8_mail_1.svg"></span>
+                    <span class="badge"></span>
+                </a>
+                <a href="#" class="w3-bar-item w3-button"><img class="width-50" src="../images/svg/services.svg"></a>
+
+            </div>
+        </div>
+        <hr>
+        <div class="w3-container">
+            <h5>Dashboard</h5>
+        </div>
+        <div class="w3-bar-block">
+            <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+            <a href="/admin" class="w3-bar-item w3-button w3-padding"><img class="width-30" src="~/images/svg/reading.svg">  Overview</a>
+            <a href="/admin/updatemovie" class="w3-bar-item w3-button w3-padding "><img class="width-30" src="~/images/svg/icons8_add_database_1.svg"> Update Movies</a>
+            <a class="w3-bar-item w3-button w3-padding active"><img class="width-30" src="~/images/svg/calendar.svg"> Movie Entry</a>
+            <a href="/admin/viewmovies" class="w3-bar-item w3-button w3-padding"><img class="width-30" src="~/images/svg/list.svg">  View Movies</a>
+
+        </div>
+    </nav>
+
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+        <!-- Header -->
+
+
+
+
+        <div class="w3-panel gilmer-font">
+            <div class="w3-row-padding" style="margin:0 -16px">
+                <div class="w3-twothird">
+
+                    <h5><img class="width-30" src="~/images/svg/clapperboard.svg"> New Movie Entry</h5>
+
+                    <table class="w3-table w3-white" id="form">
+
+                        <form id="myForm" onsubmit="return UploadImage()">
+                        <tr>
+                            <td><img class="width-30" src="~/images/svg/dvd_logo.svg"></td>
+                            <td class="gd">Movie Name</td>
+                            <td><input type="text" id="MovieName" name="MovieName" required /><lable id="forMovieName" class="badge bg-danger"></lable></td>
+                        </tr>
+                        <tr>
+                            <td><img class="width-30" src="~/images/svg/camcorder_pro.svg"></td>
+                            <td class="gd">Genre</td>
+                            <td><input type="text" id="Genre" name="Genre" required /><lable id="forGenre" class="badge bg-danger"></lable></td>
+                        </tr>
+                        <tr>
+                            <td><img class="width-30" src="~/images/svg/calendar.svg"></td>
+                            <td class="gd">Release Date</td>
+                            <td><input type="date" id="ReleaseDate" name="ReleaseDate" required /></td>
+                            <lable id="forReleaseDate" class="badge bg-danger"></lable>
+                        </tr>
+                        <tr>
+                            <td><img class="width-30" src="~/images/svg/icons8_rating.svg"></td>
+                            <td class="gd">Rating</td>
+                            <td><input style="width: 300px;" type="range" min="0" max="10" step="0.1" id="Rating" name="Rating" oninput="range_out()" required /><span id="range_out"></span></td>
+
+                        </tr>
+                        <tr>
+                            <td><img class="width-30" src="~/images/svg/picture.svg"></td>
+                            <td class="gd">Image</td>
+                            <td><input type="file" id="PosterImage" name="PosterImage" accept="image/*" required /><lable id="forPosterImage" class="badge bg-danger"></lable></td>
+                        </tr>
+                        <tr style="align-items: stretch;">
+                            <td></td>
+                            <td></td>
+                            <td><input type="submit" class="btn btn-primary" value="Submit" id="submit-button" onclick="Validate()" /></td>
+
+                        </tr>
+                        <tr id="progressbars">
+                            <td colspan="3">
+                                <div class="progress">
+                                    <div class="progress-bar"></div>
+                                    <div class="percent">0%</div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        </form>
+
+
+                    </table>
+                    <table class="w3-table w3-white">
+                        <tr>
+                            <td colspan="3">
+                                <div id="skeleton">
+                                    <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+                                    <span id="loader"><ion-spinner class="valign"></ion-spinner></span>
+                                </div>
+                                <div class="text-success" id="result_success"></div>
+                                <div class="text-danger" id="result_fail"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div>
+
+                    <script type="text/javascript">
+                        document.getElementById("range_out").innerHTML = document.getElementById("Rating").value = 0;
+
+                        function range_out() {
+                            document.getElementById("range_out").innerHTML = document.getElementById("Rating").value;
+                        }
+                        var loader = $("#loader");
+                        var skeleton = $("#skeleton");
+                        var prog = $("#progressbars");
+                        skeleton.hide();
+                        loader.hide();
+                        prog.hide();
+
+                        function UploadImage() {
+                            $("#submit-button").prop("disabled", true);
+                            loader.show();
+                            skeleton.show();
+                            prog.show();
+                            $("#result_success").html("");
+                            $("#result_fail").html("");
+                            var file = $("#PosterImage").get(0).files;
+                            var data = new FormData;
+                            data.append("ImageFile", file[0]);
+                            data.append("MovieName", $("#MovieName").val());
+                            data.append("Genre", $("#Genre").val());
+                            data.append("Rating", $("#Rating").val());
+                            data.append("ReleaseDate", $("#ReleaseDate").val());
+
+                            $.ajax({
+                                xhr: function () {
+                                    var xhr = new window.XMLHttpRequest();
+                                    xhr.upload.addEventListener("progress", function (evt) {
+                                        if (evt.lengthComputable) {
+                                            var percentComplete = ((evt.loaded / evt.total) * 100).toFixed(1);
+                                            $(".progress-bar").width(percentComplete + '%');
+                                            $(".percent").html(percentComplete + '%');
+                                        }
+                                    }, false);
+                                    return xhr;
+                                },
+                                type: "POST",
+                                url: "/admin/ImageUpload",
+                                data: data,
+                                contentType: false,
+                                processData: false
+                            }).done(function (response) {
+                                if (response.result) {
+                                    $("#result_success").html(response.message + '<a href=""> Add Another One</a>');
+                                    $("#result_fail").html('');
+                                    $("#form").hide();
+                                }
+                                else {
+                                    $("#result_fail").html(response.message);
+                                    $("#result_success").html("");
+                                    $("#submit-button").prop("disabled", false);
+
+                                } loader.hide();
+                                skeleton.hide();
+                            }
+
+                            );
+                            return false;
+                        }
+
+
+
+                    </script>
+
+
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+
+</body>
+<script>
+    // Get the Sidebar
+    var mySidebar = document.getElementById("mySidebar");
+
+    // Get the DIV with overlay effect
+    var overlayBg = document.getElementById("myOverlay");
+
+    // Toggle between showing and hiding the sidebar, and add overlay effect
+    function w3_open() {
+        if (mySidebar.style.display === 'block') {
+            mySidebar.style.display = 'none';
+            overlayBg.style.display = "none";
+        } else {
+            mySidebar.style.display = 'block';
+            overlayBg.style.display = "block";
+        }
+    }
+
+    // Close the sidebar with the close button
+    function w3_close() {
+        mySidebar.style.display = "none";
+        overlayBg.style.display = "none";
+    }
+</script>
+@Scripts.Render("~/Script/adminindex")
+@Scripts.Render("~/Scripts/jquery.validate.min.js")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+</html>
+
+
+
+

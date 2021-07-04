@@ -1,0 +1,232 @@
+﻿@model OnlineMovieTicketBookingSystem.Models.Movies
+
+
+@{
+    var cookieValue = Request.Cookies["admin"];
+    if (cookieValue == null)
+    {
+        Response.Redirect("~/admin/login");
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+@Styles.Render("~/Style/adminindex")
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css" />
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="~/Scripts/bootbox.js"></script>
+<script src="~/Scripts/response.js"></script>
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.js")
+
+<link rel="icon" href="~/images/favicon.png">
+
+<style>
+
+
+    a.active {
+        background-color: aliceblue;
+        box-shadow: 0px 0px 10px grey;
+        color: black;
+    }
+
+    .active {
+        background-color: blue;
+        color: white;
+    }
+
+    .previous {
+        color: white;
+        background-color: blueviolet;
+    }
+
+    .next {
+        color: white;
+        background-color: blueviolet;
+    }
+
+    .paginate_button {
+        margin-right: 10px;
+        display: inline-block;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        text-decoration: none;
+        vertical-align: middle;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        border-radius: .25rem;
+    }
+
+    .notification {
+        color: white;
+        text-decoration: none;
+        position: relative;
+        display: inline-block;
+        border-radius: 2px;
+    }
+
+        .notification .badge {
+            position: absolute;
+            right: 6px;
+            border-radius: 50%;
+            background-color: red;
+            color: white;
+        }
+</style>
+<body class="w3-light-grey ">
+
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+        <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+        <span class="w3-bar-item w3-right">MoviesYet</span>
+    </div>
+
+    <!-- Sidebar/menu -->
+    <nav class="w3-sidebar w3-collapse w3-white w3-animate-left " style="z-index:3;width:300px;" id="mySidebar">
+        <br>
+        <div class="w3-container w3-row">
+            <div class="w3-col s4">
+                <img src="~/images/ceo.jpg" class="w3-circle w3-margin-right" style="width:80px; box-shadow: 0px 0px 5px grey;">
+            </div>
+            <div class="w3-col s8 w3-bar">
+                <span>Welcome, <strong>Admin</strong></span><br>
+                <a href="#" class="w3-bar-item w3-button notification">
+                    <span><img class="width-50" src="~/images/svg/icons8_mail_1.svg"></span>
+                    <span class="badge"></span>
+                </a>
+                <a href="#" class="w3-bar-item w3-button"><img class="width-50" src="~/images/svg/services.svg"></a>
+
+            </div>
+        </div>
+        <hr>
+        <div class="w3-container">
+            <h5>Dashboard</h5>
+        </div>
+        <div class="w3-bar-block">
+            <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+            <a href="/admin" class="w3-bar-item w3-button w3-padding"><img class="width-30" src="~/images/svg/reading.svg">  Overview</a>
+            <a class="w3-bar-item w3-button w3-padding active"><img class="width-30" src="~/images/svg/icons8_add_database_1.svg"> Update Movies</a>
+            <a href="/admin/newmovieentry" class="w3-bar-item w3-button w3-padding"><img class="width-30" src="~/images/svg/calendar.svg"> Movie Entry</a>
+            <a href="/admin/viewmovies"class="w3-bar-item w3-button w3-padding "><img class="width-30" src="~/images/svg/list.svg">  View Movies</a>
+
+        </div>
+    </nav>
+
+
+    <!-- Overlay effect when opening sidebar on small screens -->
+    <div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+    <!-- !PAGE CONTENT! -->
+    <div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+        <!-- Header -->
+        <div class="w3-panel">
+            <div class="w3-row-padding" style="margin:0 -16px">
+                <div class="container padding-10 margin-10">
+                    <h1>Update Movies</h1>
+                    <div class="container">
+                        <div class="container bg-grey m-w-400 p-t-10 p-b-30 p-l-30 b-r-8 m-t-30">
+                            <div class="row input-group row-cols-sm-2" ">
+                                @using (Html.BeginForm("updatemovie", "admin"))
+                                {
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.MovieName, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.MovieName, new { @class = "form-control" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Genre, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.Genre, new { @class = "form-control" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.ReleaseDate, new { @class = "form-label" })
+                                        @Html.TextBoxFor(m => m.ReleaseDate, new { @class = "form-control datepicker", type = "datetime" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Rating, new { @class = "form-label" })
+                                        <input type="range" min="0" max="10" step="0.1" id="Rating" name="Rating" />
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Description, new { @class = "form-label" })
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                                    </div>
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.PosterImage, new { @class = "form-label" })
+                                        <img class="m-w-350" src="~/UploadFiles/@(Model.PosterImage)">
+                                    </div>
+                                    <div class="mb-3">
+                                        <lable>New Image</lable>
+                                        <input id="newImage" name="newImage" type="file">
+                                    </div>
+                                }
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+
+
+
+        <!-- Footer -->
+        <footer class="w3-container w3-padding-16 w3-light-grey">
+            <h4>FOOTER</h4>
+            <p>Powered by MoviesYet</p>
+        </footer>
+
+        <!-- End page content -->
+    </div>
+
+    <script>
+        // Get the Sidebar
+
+            $("#movies").DataTable();
+
+        var mySidebar = document.getElementById("mySidebar");
+
+        // Get the DIV with overlay effect
+        var overlayBg = document.getElementById("myOverlay");
+
+        // Toggle between showing and hiding the sidebar, and add overlay effect
+        function w3_open() {
+            if (mySidebar.style.display === 'block') {
+                mySidebar.style.display = 'none';
+                overlayBg.style.display = "none";
+            } else {
+                mySidebar.style.display = 'block';
+                overlayBg.style.display = "block";
+            }
+        }
+
+        // Close the sidebar with the close button
+        function w3_close() {
+            mySidebar.style.display = "none";
+            overlayBg.style.display = "none";
+        }
+        $(document).ready(function () {
+            $(".datepicker").datetimepicker({
+                dateFormat: "dd-mm-yy",
+                changemonth: true,
+                changeyear: true
+            });
+        });
+    </script>
+
+</body>
+@Scripts.Render("~/Script/adminindex")
+@Scripts.Render("~/Scripts/jquery.validate.min.js")
+@Scripts.Render("~/Scripts/jquery.unobtrusive-ajax.min.js")
+</html>
+
+
+

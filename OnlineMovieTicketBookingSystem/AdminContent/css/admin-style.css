@@ -1,0 +1,32 @@
+
+#admin-logo{
+    visibility:hidden;
+}
+.table-data-hover:hover {
+   
+    box-shadow: 0px 0px 10px grey;
+}
+@media screen and (min-width: 800px) {
+      #admin-logo{
+    visibility:visible;
+    }
+}
+.w3-table{
+    border-radius:5px;
+}
+.break-line{
+    border-bottom:0.5px solid black;
+}
+.gd{
+    background: -webkit-linear-gradient(0deg,#ff9000 0,red 10%,#0a00b2 40%);
+    -webkit-background-clip: text;
+    display: inline-block;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.bar{
+    background: linear-gradient(to right, black 50%, white 50%);
+}
+.active:hover{
+    background-color:aliceblue;
+}
